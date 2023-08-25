@@ -237,9 +237,6 @@ print(articles[:5])
 
 # We basically just take the most common word from each articles and that's our summary 
 
-# In[ ]:
-
-
 from collections import Counter
 from nltk.tokenize import sent_tokenize,word_tokenize,PunktSentenceTokenizer
 summary = []
