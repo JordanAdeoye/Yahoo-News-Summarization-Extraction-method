@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
 
 from bs4 import BeautifulSoup as bs
 import requests
@@ -10,40 +5,22 @@ import json
 import re
 
 
-# In[ ]:
-
-
 r = requests.get('https://www.yahoo.com')
 r.raise_for_status()
 
 
 # Returns the content of url 
-
-# In[ ]:
-
-
 html = bs(r.content)
-
-
-# In[ ]:
-
-
 print(html.prettify())
 
 
 # This is where the the each article are stored in the html code
-
-# In[ ]:
-
 
 body = html.find_all(class_="List(n) P(0) grid-layout stream-grid stream-items")
 content = body[0].find_all(class_="Pos(r) D(f)")
 
 
 # Code below get the gets and stores the title of each articles and the link to the article and appends it to a list
-
-# In[ ]:
-
 
 info = []
 for i in content:
@@ -62,13 +39,8 @@ for i in content:
 
 
 # Check if the new news article is not in the json file, then append it to the json file then save it
-# 
+ 
 # num_of_new_articles is going to be useful later on when you automate the code to only send the newly added articles
-# 
-
-# In[ ]:
-
-
 
 
 with open('News_articles2.json') as f:
@@ -85,38 +57,21 @@ with open('News_articles2.json','w') as f:
     json.dump(js_file,f)
         
 
-
-# In[ ]:
-
-
 # load the update json file 
 with open('News_articles2.json') as f:
     js_daily = json.load(f)
     
 working_set = js_daily
 
-
-# In[ ]:
-
-
 len(working_set)
 
 
-# Remove the ads articles
-# 
-# I noticed the ads articles don't have yahoo in the url or the keys are just whitespace
-# 
-# I want to loop through each dictionary and use regex to find the dictionary that does have '.yahoo' and delete them from the list because does are ads or atleat i know they are not news article
-# 
-# Remove instances with whitespace as keys in the dictionary
-# 
-# Use regex to check for .yahoo in the dictionaty value
-# 
-# we reversed the the working_set, so it goes from most recent article to least recent
-
-# In[ ]:
-
-
+# Remove the ads articles. 
+# I noticed the ads articles don't have yahoo in the url or the keys are just whitespace. 
+# I want to loop through each dictionary and use regex to find the dictionary that does have '.yahoo' and delete them from the list because does are ads or atleast i know they are not news article.
+# Remove instances with whitespace as keys in the dictionary.
+# Use regex to check for .yahoo in the dictionaty value. 
+# we reversed the the working_set, so it goes from most recent article to least recent.
 
 working_set_reversed = working_set[::-1]
 for j,i in enumerate(working_set_reversed[:num_of_new_articles]):
@@ -132,25 +87,14 @@ for i in remove_item:
     working_set_reversed.remove(i)    
     
 
-
-# In[ ]:
-
-
 for j,i in enumerate(working_set_reversed[:num_of_new_articles]):
-
     print(working_set_reversed[j][list(i.keys())[0]])
 print('\n')    
 print("we have "+str(len(working_set))+" articles in total and we have "+str(num_of_new_articles)+" newly found articles")
 
 
-# We go to every dictionary values, and use request to get the content of each articles then we use bs4 to get the p tag, which is the text of the article
-# 
+# We go to every dictionary values, and use request to get the content of each articles then we use bs4 to get the p tag, which is the text of the article 
 # since we only want the content of the article but the p tag returns some other information after the end of the article, say some recommendation to view other article and we dont want that, one thing i noticed is that most article end with some words which i store in the end_words list, so i loop through each article and once i see any any word in the end_words list and delete from that word to the end. I wouldn't say its 100 percent accurate but it's like 90 percent accurate cause they are just so many possible ways for an article to end
-
-# In[ ]:
-
-
-
 
 end_words= ['Follow us on Twitter and Instagram',
 "follow us on Facebook, Twitter, and Instagram",'More Latest News!','TRENDING',
@@ -176,10 +120,7 @@ for index,working in enumerate(working_set_reversed[:num_of_new_articles]):
 
 # # Cleaning the articles
 
-# These are some things that need to be cleaned from the articles
-
-# In[ ]:
-
+# below comments are some things that need to be cleaned from the articles
 
 # pic.twitter.com/8wwe2lximt
 # — theblaze (@theblaze) july 27, 2023
@@ -206,14 +147,8 @@ for index,working in enumerate(working_set_reversed[:num_of_new_articles]):
 # ”
 
 
-# In[ ]:
-
-
 for j,i in enumerate(working_set_reversed[:num_of_new_articles+1]):
     working_set_reversed[j][list(working_set_reversed[j].keys())[0]] = " ".join(working_set_reversed[j][list(working_set_reversed[j].keys())[0]])
-
-
-# In[ ]:
 
 
 emoji_pattern = re.compile("["
@@ -296,16 +231,6 @@ articles = clean_up(working_set_reversed)
 print(articles[:5])
 
 
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
 
 
 # # nltk 
@@ -325,8 +250,6 @@ for j,i in enumerate(working_set_reversed[:num_of_new_articles]):
     summary.append({list(working_set_reversed[j].keys())[0]:' '.join([k[0] for k in counts])})
 
 
-# In[ ]:
-
 
 with open('summariesconfirm.json') as f:
     summary_file = json.load(f)
@@ -340,26 +263,6 @@ for i in summary:
 with open('summariesconfirm.json','w') as f:
     json.dump(summary_file,f)
 
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
 
 
 
